@@ -5,10 +5,10 @@ from psycopg2.extras import RealDictCursor
 class DatabaseManager:
     def __init__(self):
         self.config = {
-            "host": "db.klcbzywmjdkeuvqmorkx.supabase.co",
-            "port": 5432,
-            "user": "postgres.klcbzywmjdkeuvqmorkx",
-            "password": "mobjeH-jewmom-kewde0",
+            "host": "aws-0-eu-west-1.pooler.supabase.com",  # <-- NEUER HOST
+            "port": 5432,  # <-- PORT BLEIBT GLEICH
+            "user": "postgres.ackkceutbjcpsehlbecp",  # <-- NEUER USER
+            "password": "mobjeH-jewmom-kewde0",  # <-- DEIN PASSWORT
             "dbname": "postgres",
             "sslmode": "require"
         }
