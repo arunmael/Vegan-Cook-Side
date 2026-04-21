@@ -34,8 +34,9 @@ class DatabaseManager:
 
         except Exception as e:
             conn.rollback()
-            print("Database error:", e)
-            return None
+            # Wir drucken den Fehler hier NICHT mehr blind aus,
+            # sondern werfen ihn zurück an die Datei, die execute_query aufgerufen hat!
+            raise e
 
     def disconnect(self):
         if self.connection and self.connection.closed == 0:

@@ -5,6 +5,7 @@ test = 'SELECT * FROM "User"'
 test_result = db.execute_query(test)
 print(test_result)
 """
+#todo Anzahl Votes ins Ergebnis reinehmen
 
 best_to_worst_recipe = ('select "Recipe"."Name", "Recipe"."Author", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating" '
                         'from "Recipe" '
@@ -14,6 +15,10 @@ best_to_worst_recipe = ('select "Recipe"."Name", "Recipe"."Author", "Recipe"."De
                         'group by "Recipe"."Name", "Recipe"."Author", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions" '
                         'order by "Rating" DESC'
                         )
+
+def new_rating():
+    pass
+
 
 best_to_worst_recipe = db.execute_query(best_to_worst_recipe)
 for recipe in best_to_worst_recipe:
