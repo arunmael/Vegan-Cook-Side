@@ -23,7 +23,7 @@ def feed():
             f'Name: {recipe["Name"]}    Author: {recipe["UserName"]}    Rating: {recipe["Rating"]}    Time: {recipe["Time"]}\n      Instructions: {recipe["Instructions"]}')
 
 
-def choose_recipe():
+def choose_recipe(users_choice):
     users_choice = input('Which recipe do you want? ')
     counter = 0
     chosen_recipe = (
