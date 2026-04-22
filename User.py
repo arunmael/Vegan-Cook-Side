@@ -58,4 +58,3 @@ def account():
         session_user_id = create_account()
 
     return session_user_id
-account()
