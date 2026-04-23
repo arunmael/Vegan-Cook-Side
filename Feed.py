@@ -6,7 +6,7 @@ test = 'SELECT * FROM "User"'
 test_result = db.execute_query(test)
 print(test_result)
 """
-#todo Anzahl Votes ins Ergebnis reinehmen
+#todo Anzahl Votes ins Ergebnis reinehmen und auch Rezpete reinnehmen die keine Bewertung haben!
 def feed():
     best_to_worst_recipe = ('select "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating" '
                             'from "Recipe" '
