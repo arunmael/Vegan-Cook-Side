@@ -1,5 +1,5 @@
 from SQL_File import db
-import User
+
 
 """
 test = 'SELECT * FROM "User"'
@@ -8,7 +8,7 @@ print(test_result)
 """
 
 def feed():
-    best_to_worst_recipe = ('select "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating", "Recipe"."CookCounter"'
+    best_to_worst_recipe = ('select "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating", "Recipe"."CookCounter" '
                             'from "Recipe" '
                             'left join "Rating" on "Recipe"."RecipeID" = "Rating"."RecipeID" '
                             'left join "Origin" on "Recipe"."OriginID" = "Origin"."OriginID" '
@@ -22,7 +22,7 @@ def feed():
         print(f'Name: {recipe["Name"]}    Author: {recipe["UserName"]}    Rating: {recipe["Rating"]}    Time: {recipe["Time"]}    Cookcounter: {recipe["CookCounter"]}\n      Instructions: {recipe["Instructions"]}')
 
 
-def choose_recipe(users_choice):
+def choose_recipe(session_user_id):
     users_choice = input('Which recipe do you want? ')
     counter = 0
     chosen_recipe = (
@@ -63,8 +63,27 @@ def choose_recipe(users_choice):
     print(f"{erstes_ergebnis['Instructions']}")
     print("=" * 55 + "\n")
 
+    new_rating(session_user_id, chosen_recipe)
+
+
     return chosen_recipe
 
-def new_rating(session_user_id):
-    choose_rating = int(input('Please rate the recipe from 1 to 5: '))
-    new_rating_user = """insert into "Rating """
+def new_rating(session_user_id, chosen_recipe):
+    recipe_name = chosen_recipe[0]['Name']
+    choose_rating = int(input('Please rate the recipe from 1 to 5 (Press 6 if you do not want to rate the recipe): '))
+
+    if choose_rating < 6 and choose_rating > 0:
+        recipe_id_query = f"""select "Recipe"."RecipeID" from "Recipe" where "Recipe"."Name" = '{recipe_name}'"""
+        recipe_id_result = db.execute_query(recipe_id_query)
+
+        recipe_id = recipe_id_result[0]['RecipeID']
+        #todo Das Rating funktioniert theoretisch allerdings muss ich es noch anpassen dass wenn ein User es noch ein zweites mal zu raten versucht es nicht abstürtzt sondern ein Nachricht bekommt wie Du hast das Rezept bereits bewertet
+        new_rating_user = f"""insert into "Rating" ("UserID", "RecipeID", "Rating") values ('{session_user_id}', '{recipe_id}', '{choose_rating}');"""
+        db.execute_query(new_rating_user)
+
+        print('Danke für deine Bewertung')
+        return
+
+    else:
+        print('Rating skipped')
+        return
