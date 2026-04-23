@@ -6,21 +6,20 @@ test = 'SELECT * FROM "User"'
 test_result = db.execute_query(test)
 print(test_result)
 """
-#todo Anzahl Votes ins Ergebnis reinehmen und auch Rezpete reinnehmen die keine Bewertung haben!
+
 def feed():
-    best_to_worst_recipe = ('select "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating" '
+    best_to_worst_recipe = ('select "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", avg("Rating"."Rating") as "Rating", "Recipe"."CookCounter"'
                             'from "Recipe" '
-                            'join "Rating" on "Recipe"."RecipeID" = "Rating"."RecipeID" '
-                            'join "Origin" on "Recipe"."OriginID" = "Origin"."OriginID" '
-                            'join "User" on "Recipe"."Author" = "User"."UserID" '
+                            'left join "Rating" on "Recipe"."RecipeID" = "Rating"."RecipeID" '
+                            'left join "Origin" on "Recipe"."OriginID" = "Origin"."OriginID" '
+                            'left join "User" on "Recipe"."Author" = "User"."UserID" '
                             'group by "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", "Recipe"."CookCounter" '
                             'order by "Rating" DESC, "Recipe"."CookCounter" DESC '
                             )
 
     best_to_worst_recipe = db.execute_query(best_to_worst_recipe)
     for recipe in best_to_worst_recipe:
-        print(
-            f'Name: {recipe["Name"]}    Author: {recipe["UserName"]}    Rating: {recipe["Rating"]}    Time: {recipe["Time"]}\n      Instructions: {recipe["Instructions"]}')
+        print(f'Name: {recipe["Name"]}    Author: {recipe["UserName"]}    Rating: {recipe["Rating"]}    Time: {recipe["Time"]}    Cookcounter: {recipe["CookCounter"]}\n      Instructions: {recipe["Instructions"]}')
 
 
 def choose_recipe(users_choice):
@@ -38,6 +37,10 @@ def choose_recipe(users_choice):
         f'group by "Recipe"."Name", "User"."UserName", "Recipe"."Description", "Recipe"."Time", "Recipe"."Instructions", "Ingredient"."Ingredient", "IngredientRecipe"."Amount", "IngredientRecipe"."AmountName", "Origin"."OriginID", "Origin"."Origin" '
         )
     chosen_recipe = db.execute_query(chosen_recipe)
+
+
+    cook_counter_update = f"""UPDATE "Recipe" SET "CookCounter" = "CookCounter" + 1 WHERE "Name" = '{chosen_recipe[0]['Name']}';"""
+    db.execute_query(cook_counter_update)
 
     erstes_ergebnis = chosen_recipe[0]
 
