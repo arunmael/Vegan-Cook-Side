@@ -70,20 +70,30 @@ def choose_recipe(session_user_id):
 
 def new_rating(session_user_id, chosen_recipe):
     recipe_name = chosen_recipe[0]['Name']
-    choose_rating = int(input('Please rate the recipe from 1 to 5 (Press 6 if you do not want to rate the recipe): '))
+    recipe_id_query = f"""select "Recipe"."RecipeID" from "Recipe" where "Recipe"."Name" = '{recipe_name}'"""
+    recipe_id_result = db.execute_query(recipe_id_query)
+    recipe_id = recipe_id_result[0]['RecipeID']
 
-    if choose_rating < 6 and choose_rating > 0:
-        recipe_id_query = f"""select "Recipe"."RecipeID" from "Recipe" where "Recipe"."Name" = '{recipe_name}'"""
-        recipe_id_result = db.execute_query(recipe_id_query)
+    already_rated = f"""select "Rating"."UserID", "Rating"."RecipeID" from "Rating" where "Rating"."UserID" = '{session_user_id}' and "Rating"."RecipeID" = '{recipe_id}'"""
+    already_rated = db.execute_query(already_rated)
 
-        recipe_id = recipe_id_result[0]['RecipeID']
-        #todo Das Rating funktioniert theoretisch allerdings muss ich es noch anpassen dass wenn ein User es noch ein zweites mal zu raten versucht es nicht abstürtzt sondern ein Nachricht bekommt wie Du hast das Rezept bereits bewertet
-        new_rating_user = f"""insert into "Rating" ("UserID", "RecipeID", "Rating") values ('{session_user_id}', '{recipe_id}', '{choose_rating}');"""
-        db.execute_query(new_rating_user)
+    counter = 0
 
-        print('Danke für deine Bewertung')
-        return
+    for i in already_rated:
+        counter += 1
 
+    if counter == 0:
+        choose_rating = int(input('Please rate the recipe from 1 to 5 (Press 6 if you do not want to rate the recipe): '))
+
+        if choose_rating < 6 and choose_rating > 0:
+            new_rating_user = f"""insert into "Rating" ("UserID", "RecipeID", "Rating") values ('{session_user_id}', '{recipe_id}', '{choose_rating}');"""
+            db.execute_query(new_rating_user)
+
+            print('Danke für deine Bewertung')
+            return
+
+        else:
+            print('Rating skipped')
+            return
     else:
-        print('Rating skipped')
         return
